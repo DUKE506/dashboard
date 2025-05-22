@@ -43,7 +43,7 @@ export default async function RootLayout({
         } antialiased relative`}
       >
         <AuthSession>{children}</AuthSession>
-        <div className="absolute right-3 bottom-3">
+        <div className="fixed right-3 bottom-3">
           <LightDarkToggle />
         </div>
       </body>

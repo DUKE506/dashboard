@@ -124,7 +124,7 @@
   html {
     font-family: var(--font-sans);
     height: 100%;
-    width: 100vw;
+    width: 100%;
   }
   .font-nanum-gothic {
     font-family: var(--font-nanum-sans);
@@ -136,6 +136,6 @@
   body {
     @apply bg-background text-foreground;
     height: 100%;
-    width: 100vw;
+    width: 100%;
   }
 }

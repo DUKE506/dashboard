@@ -10,7 +10,9 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <>
       <Nav />
-      <AddSheet />
+      <div className="flex justify-end p-4 border-y ">
+        <AddSheet />
+      </div>
       {children}
     </>
   );
