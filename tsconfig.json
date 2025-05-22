@@ -11,6 +11,8 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    //dayjs로 추가함 2025.05.22
+    "allowSyntheticDefaultImports": true,
     "jsx": "preserve",
     "incremental": true,
     "plugins": [

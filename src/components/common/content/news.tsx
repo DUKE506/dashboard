@@ -7,7 +7,6 @@ import GridLayout from "react-grid-layout";
 
 const getNews = async (url: string) => {
   const res = await ky.get(url);
-
   const data = await res.json();
 
   return data;
@@ -20,12 +19,12 @@ interface ContentProps {
 
 const News = ({ data, children, ...props }: ContentProps) => {
   const [search, setSearch] = useState<string>("속보");
-  const NEW_API_URL = `/api/search/news?query=${search}&display=20`;
+  const NEWS_API_URL = `/api/search/news?query=${search}&display=20`;
   const { setNaverData, naverData } = useDataState();
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await getNews(NEW_API_URL);
+      const res = await getNews(NEWS_API_URL);
       setNaverData(res as NaverData);
     };
 
@@ -35,7 +34,7 @@ const News = ({ data, children, ...props }: ContentProps) => {
   const onSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!(e.code === "Enter")) return;
 
-    const res = await getNews(NEW_API_URL);
+    const res = await getNews(NEWS_API_URL);
     setNaverData(res as NaverData);
   };
 
@@ -44,6 +43,8 @@ const News = ({ data, children, ...props }: ContentProps) => {
       {children}
       <div className="p-2 flex-shrink-0">
         <Input
+          placeholder="search"
+          value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => onSearch(e)}
         />
