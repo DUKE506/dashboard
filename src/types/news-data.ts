@@ -1,6 +1,6 @@
-class NaverData {
+class NaverNewsData {
   display: number;
-  items: NaverItem[];
+  items: NaverNewsItem[];
   lastBuildDate: string;
   start: number;
   total: number;
@@ -13,7 +13,7 @@ class NaverData {
     total,
   }: {
     display: number;
-    items: NaverItem[];
+    items: NaverNewsItem[];
     lastBuildDate: string;
     start: number;
     total: number;
@@ -26,7 +26,7 @@ class NaverData {
   }
 }
 
-class NaverItem {
+class NaverNewsItem {
   title: string;
   link: string;
   description: string;
