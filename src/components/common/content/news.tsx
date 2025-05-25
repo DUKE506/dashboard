@@ -25,7 +25,7 @@ const News = ({ data, children, ...props }: ContentProps) => {
   useEffect(() => {
     const fetchData = async () => {
       const res = await getNews(NEWS_API_URL);
-      setNaverData(res as NaverData);
+      setNaverData(res as NaverNewsData);
     };
 
     fetchData();
@@ -35,7 +35,7 @@ const News = ({ data, children, ...props }: ContentProps) => {
     if (!(e.code === "Enter")) return;
 
     const res = await getNews(NEWS_API_URL);
-    setNaverData(res as NaverData);
+    setNaverData(res as NaverNewsData);
   };
 
   return (

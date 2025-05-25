@@ -42,4 +42,9 @@ export const mockContents: Contents[] = [
     name: "환율",
     description: "대한민국을 기준으로 국가별 환율을 조회합니다.",
   },
+  {
+    code: 5,
+    name: "캘린더",
+    description: "구글 캘린더",
+  },
 ];

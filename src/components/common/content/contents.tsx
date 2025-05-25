@@ -14,8 +14,11 @@ const Contents = ({ data, children, ...props }: ContentsProps) => {
   const renderContentsByCode = () => {
     switch (data.contents.name) {
       case "뉴스":
+        data.item.minW = 3
+        data.item.minH = 2
         return <News data={data.item} />;
       case "날씨":
+        data.item.minW = 2
         return <Weather />;
       default:
         return (
