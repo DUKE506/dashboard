@@ -6,6 +6,7 @@ import News from "./news";
 import Weather from "./weather";
 import Stock from "./stock";
 import Todo from "./todo";
+import Station from "./station";
 
 interface ContentsProps {
   data: GridContentsLayout;
@@ -28,6 +29,9 @@ const Contents = ({ data, children, ...props }: ContentsProps) => {
       case "할일":
         data.item.minW = 2;
         return <Todo />;
+      case "지하철 도착정보":
+        data.item.minW = 2;
+        return <Station />;
       default:
         return (
           <div className="flex justify-center items-center text-xs h-full">

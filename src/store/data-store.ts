@@ -1,3 +1,4 @@
+import { StationData } from "@/types/arrival-info";
 import {
   DisplayWeather,
   WeatherData,
@@ -17,6 +18,10 @@ interface DataState {
   weatherData: WeatherDateGroup[];
   setWeatherData: (data: WeatherDateGroup) => void;
   getWeatherData: (url: string) => Promise<boolean>;
+
+  //지하철 도착
+  stationData: StationData[];
+  getStationArrivalData: (name: string) => Promise<boolean>;
 }
 
 export const useDataState = create<DataState>()(
@@ -28,6 +33,7 @@ export const useDataState = create<DataState>()(
           set({ naverData: data });
         },
         weatherData: [],
+        stationData: [],
         setWeatherData: () => {},
         getWeatherData: async (url) => {
           const res = await ky.get(url);
@@ -91,6 +97,33 @@ export const useDataState = create<DataState>()(
           set({ weatherData: result });
 
           return await res.ok;
+        },
+        getStationArrivalData: async (name) => {
+          const res = await ky.get(`api/station?name=${name}`);
+          const data: Record<string, any> = await res.json();
+
+          if (!res.ok) return res.ok;
+
+          const newStationData: StationData = {
+            name,
+            arrivalInfo: data.realtimeArrivalList.map(
+              (a: Record<string, any>) => {
+                const { subwayId, updnLine, barvlDt } = a;
+                return {
+                  subwayId,
+                  updnLine,
+                  barvlDt,
+                  subwayName: name,
+                };
+              }
+            ),
+          };
+
+          set((state) => ({
+            stationData: [...state.stationData, newStationData],
+          }));
+
+          return res.ok;
         },
       }),
       { name: "data-store" }
