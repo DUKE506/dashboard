@@ -47,4 +47,14 @@ export const mockContents: Contents[] = [
     name: "캘린더",
     description: "구글 캘린더",
   },
+  {
+    code: 6,
+    name: "증권",
+    description: "주식 정보",
+  },
+  {
+    code: 7,
+    name: "할일",
+    description: "To do List 할일을 기록할 수 있습니다.",
+  },
 ];
