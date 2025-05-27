@@ -1,4 +1,5 @@
-import { StationData } from "@/types/arrival-info";
+import { subwayIdTransfer } from "@/lib/station";
+import { ArrivalInfo, StationData, Subway } from "@/types/arrival-info";
 import {
   DisplayWeather,
   WeatherData,
@@ -21,13 +22,13 @@ interface DataState {
 
   //지하철 도착
   stationData: StationData[];
-  getStationArrivalData: (name: string) => Promise<boolean>;
+  addStationArrivalData: (name: string) => Promise<boolean>;
 }
 
 export const useDataState = create<DataState>()(
   devtools(
     persist<DataState>(
-      (set) => ({
+      (set, get) => ({
         naverData: undefined,
         setNaverData: (data) => {
           set({ naverData: data });
@@ -98,30 +99,91 @@ export const useDataState = create<DataState>()(
 
           return await res.ok;
         },
-        getStationArrivalData: async (name) => {
+        addStationArrivalData: async (name) => {
           const res = await ky.get(`api/station?name=${name}`);
           const data: Record<string, any> = await res.json();
 
           if (!res.ok) return res.ok;
 
-          const newStationData: StationData = {
-            name,
-            arrivalInfo: data.realtimeArrivalList.map(
-              (a: Record<string, any>) => {
-                const { subwayId, updnLine, barvlDt } = a;
-                return {
-                  subwayId,
-                  updnLine,
-                  barvlDt,
-                  subwayName: name,
-                };
-              }
-            ),
-          };
+          /**
+           * 1.역이 동일한지
+           * 2-1 동일한경우 =>  하위값변경
+           * 2-2 다른경우 => 신규 추가
+           */
+          set((state) => {
+            const existing = state.stationData.find((s) => s.name === name);
 
-          set((state) => ({
-            stationData: [...state.stationData, newStationData],
-          }));
+            //호선별 그룹화
+            const subwayGroup = data.realtimeArrivalList.reduce(
+              (acc: any, obj: any) => {
+                let key = subwayIdTransfer(obj.subwayId);
+
+                // console.log("키값 : ", key);
+                if (!acc[key]) {
+                  acc[key] = { upLine: [], downLine: [] };
+                }
+                const upDown = obj.ordkey.slice(0, 1);
+                // console.log("상하행 : ", upDown);
+                if (upDown === "0") {
+                  //상행
+                  acc[key].upLine.push(
+                    new ArrivalInfo({
+                      subwayId: obj.subwayId,
+                      subwayName: name,
+                      updnLine: obj.updnLine,
+                      bstatnNm: obj.bstatnNm,
+                      barvlDt: obj.barvlDt,
+                    })
+                  );
+                } else {
+                  acc[key].downLine.push(
+                    new ArrivalInfo({
+                      subwayId: obj.subwayId,
+                      subwayName: name,
+                      updnLine: obj.updnLine,
+                      bstatnNm: obj.bstatnNm,
+                      barvlDt: obj.barvlDt,
+                    })
+                  );
+                }
+
+                return acc;
+              },
+              {}
+            );
+
+            const subway = Object.entries(subwayGroup).map(([key, value]) => {
+              return new Subway({
+                name: key,
+                upLine: subwayGroup[key].upLine,
+                downLine: subwayGroup[key].downLine,
+              });
+            });
+
+            return {
+              stationData: existing
+                ? state.stationData.map((s) =>
+                    s.name === name
+                      ? {
+                          ...s,
+                          selectedAt: new Date(),
+                          subway: subway,
+                        }
+                      : s
+                  )
+                : [
+                    ...state.stationData,
+                    new StationData({
+                      name,
+                      subway: subway,
+                      selectedAt: new Date(),
+                    }),
+                  ],
+            };
+          });
+          const { stationData } = get();
+
+          console.log(stationData);
 
           return res.ok;
         },

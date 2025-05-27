@@ -1,15 +1,39 @@
 export class StationData {
   name: string;
-  arrivalInfo: ArrivalInfo[];
+  subway: Subway[];
+  selectedAt?: Date;
 
   constructor({
     name,
-    arrivalInfo,
+    subway,
+    selectedAt,
   }: {
     name: string;
-    arrivalInfo: ArrivalInfo[];
+    subway: Subway[];
+    selectedAt?: Date;
   }) {
-    (this.name = name), (this.arrivalInfo = arrivalInfo);
+    (this.name = name), (this.subway = subway);
+    this.selectedAt = selectedAt;
+  }
+}
+
+export class Subway {
+  name: string;
+  upLine: ArrivalInfo[];
+  downLine: ArrivalInfo[];
+
+  constructor({
+    name,
+    upLine,
+    downLine,
+  }: {
+    name: string;
+    upLine: ArrivalInfo[];
+    downLine: ArrivalInfo[];
+  }) {
+    this.name = name;
+    this.upLine = upLine;
+    this.downLine = downLine;
   }
 }
 
