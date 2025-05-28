@@ -1,3 +1,5 @@
+import { ArrivalInfo, StationData, Subway } from "@/types/arrival-info";
+
 export const subwayIdTransfer = (stationId: string) => {
   switch (stationId) {
     case "1001":
@@ -88,4 +90,63 @@ export const lineColor = async (line: string) => {
     default:
       return "#000000";
   }
+};
+
+interface subwayItemCastingProps {
+  existingData?: StationData[];
+  newData: Record<string, any>;
+}
+
+export const subwayItemCasting = ({
+  existingData,
+  newData,
+}: subwayItemCastingProps): Subway[] => {
+  //Map객체 형변환
+  //호선별 그룹화
+  const subwayGroup = newData.reduce((acc: any, obj: any) => {
+    let key = subwayIdTransfer(obj.subwayId);
+
+    // console.log("키값 : ", key);
+    if (!acc[key]) {
+      acc[key] = { upLine: [], downLine: [] };
+    }
+    const upDown = obj.ordkey.slice(0, 1);
+    // console.log("상하행 : ", upDown);
+    if (upDown === "0") {
+      //상행
+      acc[key].upLine.push(
+        new ArrivalInfo({
+          subwayId: obj.subwayId,
+          subwayName: obj.statnNm,
+          updnLine: obj.updnLine,
+          bstatnNm: obj.bstatnNm,
+          barvlDt: obj.barvlDt,
+        })
+      );
+    } else {
+      acc[key].downLine.push(
+        new ArrivalInfo({
+          subwayId: obj.subwayId,
+          subwayName: obj.statnNm,
+          updnLine: obj.updnLine,
+          bstatnNm: obj.bstatnNm,
+          barvlDt: obj.barvlDt,
+        })
+      );
+    }
+
+    return acc;
+  }, {});
+
+  //Subway 타입 변경
+
+  const subway = Object.entries(subwayGroup).map(([key, value]) => {
+    return new Subway({
+      name: key,
+      upLine: subwayGroup[key].upLine,
+      downLine: subwayGroup[key].downLine,
+    });
+  });
+
+  return subway;
 };

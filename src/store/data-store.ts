@@ -1,4 +1,4 @@
-import { subwayIdTransfer } from "@/lib/station";
+import { subwayIdTransfer, subwayItemCasting } from "@/lib/station";
 import { ArrivalInfo, StationData, Subway } from "@/types/arrival-info";
 import {
   DisplayWeather,
@@ -23,6 +23,8 @@ interface DataState {
   //지하철 도착
   stationData: StationData[];
   addStationArrivalData: (name: string) => Promise<boolean>;
+  deleteStation: (name: string) => void;
+  selectAllStation: () => Promise<boolean>;
 }
 
 export const useDataState = create<DataState>()(
@@ -113,52 +115,56 @@ export const useDataState = create<DataState>()(
           set((state) => {
             const existing = state.stationData.find((s) => s.name === name);
 
-            //호선별 그룹화
-            const subwayGroup = data.realtimeArrivalList.reduce(
-              (acc: any, obj: any) => {
-                let key = subwayIdTransfer(obj.subwayId);
-
-                // console.log("키값 : ", key);
-                if (!acc[key]) {
-                  acc[key] = { upLine: [], downLine: [] };
-                }
-                const upDown = obj.ordkey.slice(0, 1);
-                // console.log("상하행 : ", upDown);
-                if (upDown === "0") {
-                  //상행
-                  acc[key].upLine.push(
-                    new ArrivalInfo({
-                      subwayId: obj.subwayId,
-                      subwayName: name,
-                      updnLine: obj.updnLine,
-                      bstatnNm: obj.bstatnNm,
-                      barvlDt: obj.barvlDt,
-                    })
-                  );
-                } else {
-                  acc[key].downLine.push(
-                    new ArrivalInfo({
-                      subwayId: obj.subwayId,
-                      subwayName: name,
-                      updnLine: obj.updnLine,
-                      bstatnNm: obj.bstatnNm,
-                      barvlDt: obj.barvlDt,
-                    })
-                  );
-                }
-
-                return acc;
-              },
-              {}
-            );
-
-            const subway = Object.entries(subwayGroup).map(([key, value]) => {
-              return new Subway({
-                name: key,
-                upLine: subwayGroup[key].upLine,
-                downLine: subwayGroup[key].downLine,
-              });
+            const subwayItems = subwayItemCasting({
+              newData: data.realtimeArrivalList,
             });
+
+            // //호선별 그룹화
+            // const subwayGroup = data.realtimeArrivalList.reduce(
+            //   (acc: any, obj: any) => {
+            //     let key = subwayIdTransfer(obj.subwayId);
+
+            //     // console.log("키값 : ", key);
+            //     if (!acc[key]) {
+            //       acc[key] = { upLine: [], downLine: [] };
+            //     }
+            //     const upDown = obj.ordkey.slice(0, 1);
+            //     // console.log("상하행 : ", upDown);
+            //     if (upDown === "0") {
+            //       //상행
+            //       acc[key].upLine.push(
+            //         new ArrivalInfo({
+            //           subwayId: obj.subwayId,
+            //           subwayName: name,
+            //           updnLine: obj.updnLine,
+            //           bstatnNm: obj.bstatnNm,
+            //           barvlDt: obj.barvlDt,
+            //         })
+            //       );
+            //     } else {
+            //       acc[key].downLine.push(
+            //         new ArrivalInfo({
+            //           subwayId: obj.subwayId,
+            //           subwayName: name,
+            //           updnLine: obj.updnLine,
+            //           bstatnNm: obj.bstatnNm,
+            //           barvlDt: obj.barvlDt,
+            //         })
+            //       );
+            //     }
+
+            //     return acc;
+            //   },
+            //   {}
+            // );
+
+            // const subway = Object.entries(subwayGroup).map(([key, value]) => {
+            //   return new Subway({
+            //     name: key,
+            //     upLine: subwayGroup[key].upLine,
+            //     downLine: subwayGroup[key].downLine,
+            //   });
+            // });
 
             return {
               stationData: existing
@@ -167,7 +173,7 @@ export const useDataState = create<DataState>()(
                       ? {
                           ...s,
                           selectedAt: new Date(),
-                          subway: subway,
+                          subway: subwayItems,
                         }
                       : s
                   )
@@ -175,7 +181,7 @@ export const useDataState = create<DataState>()(
                     ...state.stationData,
                     new StationData({
                       name,
-                      subway: subway,
+                      subway: subwayItems,
                       selectedAt: new Date(),
                     }),
                   ],
@@ -186,6 +192,46 @@ export const useDataState = create<DataState>()(
           console.log(stationData);
 
           return res.ok;
+        },
+
+        deleteStation: (name) => {
+          set((state) => ({
+            stationData: state.stationData.filter((s) => s.name !== name),
+          }));
+        },
+
+        selectAllStation: async () => {
+          const { stationData } = get();
+          if (stationData.length < 0) return false;
+
+          const req = stationData.map((s) =>
+            ky.get(`api/station?name=${s.name}`)
+          );
+
+          await Promise.all(req).then((responses) => {
+            Promise.all(
+              responses.map(async (res) => {
+                console.log(res);
+                const searchParams = new URL(res.url).searchParams;
+                console.log(searchParams.get("name"));
+                const data: Record<string, any> = await res.json();
+
+                const subwayItems = subwayItemCasting({
+                  newData: data.realtimeArrivalList,
+                });
+
+                set((state) => ({
+                  stationData: state.stationData.map((s) =>
+                    s.name === searchParams.get("name")
+                      ? { ...s, selectedAt: new Date(), subway: subwayItems }
+                      : s
+                  ),
+                }));
+              })
+            );
+          }).catch;
+
+          return true;
         },
       }),
       { name: "data-store" }
