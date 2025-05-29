@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 import {
+  addMonths,
   eachDayOfInterval,
   endOfMonth,
   endOfWeek,
   getMonth,
   startOfMonth,
   startOfWeek,
+  subMonths,
 } from "date-fns";
 import dayjs from "dayjs";
 
@@ -71,8 +73,19 @@ export const useCalendar = (data: Date) => {
     return weeks;
   }, [curDate]);
 
+  //이전달
+  const handlePrevMonth = () => {
+    setCurDate((prev) => subMonths(prev, 1));
+  };
+  //다음달
+  const handleNextMonth = () => {
+    setCurDate((prev) => addMonths(prev, 1));
+  };
+
   return {
     weeks: generateWeekForMonth,
     curDate: curDate,
+    onPrevMonth: handlePrevMonth,
+    onNextMonth: handleNextMonth,
   };
 };
