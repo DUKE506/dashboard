@@ -13,12 +13,15 @@ const GridItem = ({ data, title, children, ...props }: GridItemProps) => {
 
   return (
     <div {...props}>
-      <div className="h-full w-full border overflow-hidden bg-white/70 flex flex-col">
-        <div className="flex items-start justify-between px-2 py-2">
+      <div className="relative h-full w-full border overflow-hidden bg-white/70 flex flex-col">
+        <div className="relative w-full flex items-start justify-between px-2 py-2 ">
           <span className="text-sm text-gray-500 leading-none font-bold">
             {title}
           </span>
-          <Ellipsis className="drag-handle w-4 h-4 text-gray-500 flex-1" />
+          <div className="flex-1 h-full drag-handle ">
+            <Ellipsis className="absolute left-[50%] top-[50%] translate-[-50%]  w-4 h-4 text-gray-500 flex-1" />
+          </div>
+
           <XIcon
             className="w-4 h-4 text-gray-500 hover:cursor-pointer"
             onClick={(e) => {

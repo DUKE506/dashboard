@@ -7,6 +7,8 @@ import Weather from "./weather";
 import Stock from "./stock";
 import Todo from "./todo";
 import Station from "./station";
+import Schedular from "./scheduler/schedular";
+import Calendar from "./calendar/calendar";
 
 interface ContentsProps {
   data: GridContentsLayout;
@@ -32,6 +34,9 @@ const Contents = ({ data, children, ...props }: ContentsProps) => {
       case "지하철 도착정보":
         data.item.minW = 2;
         return <Station />;
+      case "스케줄러":
+        data.item.minW = 2;
+        return <Calendar />;
       default:
         return (
           <div className="flex justify-center items-center text-xs h-full">

@@ -62,4 +62,9 @@ export const mockContents: Contents[] = [
     name: "지하철 도착정보",
     description: "서울특별시 지하철 도착정보입니다.",
   },
+  {
+    code: 9,
+    name: "스케줄러",
+    description: "일정을 관리할 수 있는 스케줄러",
+  },
 ];
