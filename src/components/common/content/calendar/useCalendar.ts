@@ -35,16 +35,16 @@ export const useCalendar = (data: Date) => {
     const startDayOfMonth = startOfMonth(curDate);
     //현재 월 마지막일
     const endDayOfMonth = endOfMonth(curDate);
-    console.log(
-      "시작일 : ",
-      startDayOfMonth,
-      dayjs(startDayOfMonth).format("YYYY-MM-DD")
-    );
-    console.log(
-      "종료일 : ",
-      endDayOfMonth,
-      dayjs(endDayOfMonth).format("YYYY-MM-DD")
-    );
+    // console.log(
+    //   "시작일 : ",
+    //   startDayOfMonth,
+    //   dayjs(startDayOfMonth).format("YYYY-MM-DD")
+    // );
+    // console.log(
+    //   "종료일 : ",
+    //   endDayOfMonth,
+    //   dayjs(endDayOfMonth).format("YYYY-MM-DD")
+    // );
 
     //달력에 표시될 전체 범위 (이전달일부 + 이번달 + 다음달 일부)
     const displayStartDay = startOfWeek(startDayOfMonth, { weekStartsOn: 0 });
@@ -55,12 +55,12 @@ export const useCalendar = (data: Date) => {
       start: displayStartDay,
       end: displayEndDay,
     });
-    console.log(
-      `${month + 1}월에 표시될 전체 일 : `,
-      allDaysOfMonth.map((d) => {
-        return dayjs(d).format("YYYY-MM-DD");
-      })
-    );
+    // console.log(
+    //   `${month + 1}월에 표시될 전체 일 : `,
+    //   allDaysOfMonth.map((d) => {
+    //     return dayjs(d).format("YYYY-MM-DD");
+    //   })
+    // );
 
     //1주씩 그룹화
     const weeks = [];

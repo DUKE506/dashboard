@@ -2,6 +2,9 @@ import dayjs from "dayjs";
 import { useCalendar } from "./useCalendar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { isSameDay } from "date-fns";
+import { useEffect } from "react";
+import { useCalendarStore } from "@/store/calendar-store";
+import { Schedule } from "@/types/schedule";
 
 interface RenderHeadersProps {
   date: Date;
@@ -63,8 +66,8 @@ const RenderDays = ({ weeks }: RenderDaysProps) => {
           );
         })}
       </div>
-      {weeks.map((w) => (
-        <div className="flex flex-1 divide-x border-x">
+      {weeks.map((w, i) => (
+        <div key={i} className="flex flex-1 divide-x border-x">
           {w.map((d, i) => {
             return <DayBox key={i} day={d} />;
           })}
@@ -75,24 +78,46 @@ const RenderDays = ({ weeks }: RenderDaysProps) => {
 };
 
 const DayBox = ({ day }: { day: Date }) => {
-  console.log(day === new Date());
+  const { holidays } = useCalendarStore();
+
   return (
     <div className="flex-1 p-2">
       <span
-        className={`text-xs p-2  ${
+        className={`text-xs   ${
           isSameDay(day, new Date())
-            ? "bg-blue-500 inline-block w-8 h-8 text-center rounded-full text-white "
+            ? "bg-blue-500 flex justify-center items-center w-6 h-6 text-center rounded-full text-white "
             : null
         }`}
       >
         {dayjs(day).format("DD")}
       </span>
+      <div className="flex flex-col gap-1 min-w-0 ">
+        {holidays.map((h, i) =>
+          isSameDay(day, h.startedAt) ? <ScheduleItem key={i} data={h} /> : null
+        )}
+      </div>
+    </div>
+  );
+};
+
+interface ScheduleItemProps {
+  data: Schedule;
+}
+
+const ScheduleItem = ({ data }: ScheduleItemProps) => {
+  return (
+    <div className="whitespace-nowrap min-w-0 bg-blue-500 w-full text-[0.6rem] text-white px-2 rounded-xs text-ellipsis overflow-hidden">
+      {data.title}
     </div>
   );
 };
 
 const Calendar = () => {
   const { weeks, curDate, onNextMonth, onPrevMonth } = useCalendar(new Date());
+  const { getHolidays } = useCalendarStore();
+  useEffect(() => {
+    getHolidays(new Date());
+  }, []);
 
   return (
     <div className="h-full flex flex-col gap-4 pb-2">
