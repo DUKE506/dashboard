@@ -12,12 +12,11 @@ export async function GET(req: NextRequest) {
     );
   try {
     const res = await ky.get(
-      `http://swopenapi.seoul.go.kr/api/subway/${
-        process.env.AUTH_SEOUL_KEY
+      `http://swopenapi.seoul.go.kr/api/subway/${process.env.AUTH_STATION_KEY
       }/json/realtimeStationArrival/1/5/${searchParams.get("name")}`
     );
     const data = await res.text();
 
     return new NextResponse(data, { status: res.status });
-  } catch (err) {}
+  } catch (err) { }
 }

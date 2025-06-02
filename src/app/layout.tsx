@@ -38,9 +38,8 @@ export default async function RootLayout({
   return (
     <html lang="ko">
       <body
-        className={`${nanumGothic.variable} ${notoSansKR.variable} ${
-          isDarkMode ? "dark" : ""
-        } antialiased relative`}
+        className={`${nanumGothic.variable} ${notoSansKR.variable} ${isDarkMode ? "dark" : ""
+          } antialiased relative`}
       >
         <AuthSession>{children}</AuthSession>
         <div className="fixed right-3 bottom-3">

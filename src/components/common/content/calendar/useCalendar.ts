@@ -24,6 +24,8 @@ const MAX_DAY_OF_MONTH = 42;
 export const useCalendar = (data: Date) => {
   //현재 날짜
   const [curDate, setCurDate] = useState<Date>(data);
+  //현재 클릭한 날
+  const [focusDate, setFocusDate] = useState<Date>(curDate);
 
   //월에 속한 주 생성
   const generateWeekForMonth = useMemo(() => {
@@ -85,7 +87,10 @@ export const useCalendar = (data: Date) => {
   return {
     weeks: generateWeekForMonth,
     curDate: curDate,
+    focusDate: focusDate,
     onPrevMonth: handlePrevMonth,
     onNextMonth: handleNextMonth,
+    onFocusDate: setFocusDate,
+
   };
 };

@@ -2,9 +2,10 @@ import dayjs from "dayjs";
 import { useCalendar } from "./useCalendar";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { isSameDay } from "date-fns";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useCalendarStore } from "@/store/calendar-store";
 import { Schedule } from "@/types/schedule";
+import CustomDialog from "../../custom-dialog";
 
 interface RenderHeadersProps {
   date: Date;
@@ -35,14 +36,21 @@ const RenderHeader = ({
       >
         <ChevronRight className="w-6 h-6 text-gray-500" />
       </div>
+      <CustomDialog className="p-0 h-fit bg-white hover:bg-gray-50">
+        <div>
+
+        </div>
+      </CustomDialog>
     </div>
   );
 };
 
 interface RenderDaysProps {
   weeks: Date[][];
+  focusDate: Date;
+  onFocusDate: Dispatch<SetStateAction<Date>>
 }
-const RenderDays = ({ weeks }: RenderDaysProps) => {
+const RenderDays = ({ weeks, focusDate, onFocusDate }: RenderDaysProps) => {
   const labels = [
     "일요일",
     "월요일",
@@ -69,7 +77,7 @@ const RenderDays = ({ weeks }: RenderDaysProps) => {
       {weeks.map((w, i) => (
         <div key={i} className="flex flex-1 divide-x border-x">
           {w.map((d, i) => {
-            return <DayBox key={i} day={d} />;
+            return <DayBox key={i} day={d} focusDate={focusDate} onClick={() => onFocusDate(d)} />;
           })}
         </div>
       ))}
@@ -77,17 +85,16 @@ const RenderDays = ({ weeks }: RenderDaysProps) => {
   );
 };
 
-const DayBox = ({ day }: { day: Date }) => {
+const DayBox = ({ day, focusDate, ...props }: { day: Date, focusDate?: Date } & React.HTMLProps<HTMLDivElement>) => {
   const { holidays } = useCalendarStore();
 
   return (
-    <div className="flex-1 p-2">
+    <div className={`flex-1 p-2 overflow-hidden ${focusDate === day ? 'bg-blue-100' : null}`}{...props}>
       <span
-        className={`text-xs   ${
-          isSameDay(day, new Date())
-            ? "bg-blue-500 flex justify-center items-center w-6 h-6 text-center rounded-full text-white "
-            : null
-        }`}
+        className={`text-xs   ${isSameDay(day, new Date())
+          ? "bg-blue-500 flex justify-center items-center w-6 h-6 text-center rounded-full text-white "
+          : null
+          }`}
       >
         {dayjs(day).format("DD")}
       </span>
@@ -95,6 +102,7 @@ const DayBox = ({ day }: { day: Date }) => {
         {holidays.map((h, i) =>
           isSameDay(day, h.startedAt) ? <ScheduleItem key={i} data={h} /> : null
         )}
+
       </div>
     </div>
   );
@@ -106,14 +114,14 @@ interface ScheduleItemProps {
 
 const ScheduleItem = ({ data }: ScheduleItemProps) => {
   return (
-    <div className="whitespace-nowrap min-w-0 bg-blue-500 w-full text-[0.6rem] text-white px-2 rounded-xs text-ellipsis overflow-hidden">
+    <div className="bg-blue-500 text-[0.6rem] text-white px-2 rounded-xs truncate">
       {data.title}
     </div>
   );
 };
 
 const Calendar = () => {
-  const { weeks, curDate, onNextMonth, onPrevMonth } = useCalendar(new Date());
+  const { weeks, curDate, focusDate, onNextMonth, onPrevMonth, onFocusDate } = useCalendar(new Date());
   const { getHolidays } = useCalendarStore();
   useEffect(() => {
     getHolidays(new Date());
@@ -131,7 +139,7 @@ const Calendar = () => {
       </div>
       <div className="flex-1 min-h-0 px-2">
         {/* 나머지 공간, 최소높이 0 */}
-        <RenderDays weeks={weeks} />
+        <RenderDays weeks={weeks} focusDate={focusDate} onFocusDate={onFocusDate} />
       </div>
     </div>
   );
