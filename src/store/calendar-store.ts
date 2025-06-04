@@ -10,6 +10,7 @@ interface CalendarState {
   holidays: Schedule[];
 
   getHolidays: (date: Date) => Promise<void>;
+  addSchedule: (schedule: Schedule) => void;
 }
 
 export const useCalendarStore = create<CalendarState>()(
@@ -46,6 +47,11 @@ export const useCalendarStore = create<CalendarState>()(
           );
 
           set({ holidays: holidays });
+        },
+        addSchedule: (schedule) => {
+          set((state) => ({
+            schedules: [...state.schedules, schedule],
+          }));
         },
       }),
       { name: "calendar-store" }

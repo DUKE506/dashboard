@@ -1,4 +1,9 @@
-import { FormControl, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import React from "react";
 import CustomDatetimePicker from "../../content/calendar/custom-datetime-picker";
 
@@ -16,7 +21,11 @@ const DatetimePickerFormItem = ({
 }: DatetimePickerFormItemProps) => {
   return (
     <FormItem>
-      <FormLabel className="text-sm">{label}</FormLabel>
+      <div className="flex justify-between">
+        <FormLabel className="text-sm">{label}</FormLabel>
+        <FormMessage />
+      </div>
+
       <FormControl>
         <CustomDatetimePicker
           value={value}

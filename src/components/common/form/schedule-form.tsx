@@ -10,6 +10,8 @@ import DatetimePickerFormItem from "./date/datetime-picker-form";
 import { Button } from "@/components/ui/button";
 import { CreateSchedule } from "@/types/schedule/create-schedule";
 import { format, isAfter, isBefore } from "date-fns";
+import { useCalendar } from "../content/calendar/useCalendar";
+import { useCalendarStore } from "@/store/calendar-store";
 
 const scheduleFormSchema = z.object({
   title: z.string().min(2, { message: "두 글자 이상 입력해주세요." }),
@@ -24,9 +26,10 @@ interface ScheduleFormProps {
 }
 
 const ScheduleForm = ({ startDate }: ScheduleFormProps) => {
+  const { schedules, addSchedule } = useCalendarStore();
   const [schedule, setSchedule] = useState<CreateSchedule>({
-    startedAt: startDate ?? new Date(),
-    endedAt: startDate ?? new Date(),
+    startedAt: startDate,
+    endedAt: startDate,
   });
   const form = useForm<ScheduleFormType>({
     resolver: zodResolver(scheduleFormSchema),
@@ -45,7 +48,12 @@ const ScheduleForm = ({ startDate }: ScheduleFormProps) => {
   }, []);
 
   const handleSubmit = (values: ScheduleFormType) => {
-    console.log(values);
+    addSchedule(
+      new Schedule({
+        id: schedules.length + 1,
+        ...values,
+      })
+    );
   };
 
   const handleDateChange = (
@@ -53,7 +61,6 @@ const ScheduleForm = ({ startDate }: ScheduleFormProps) => {
     date: Date,
     onChange: (...event: any[]) => void
   ) => {
-    console.log("선택 날짜 : ", format(date, "yyyy/MM/dd HH:mm"));
     //시작날짜가 종료날짜보다 이후인 경우
     if (type === "start") {
       if (isAfter(date, form.getValues().endedAt)) {
@@ -89,7 +96,7 @@ const ScheduleForm = ({ startDate }: ScheduleFormProps) => {
             control={form.control}
             name="title"
             render={({ field }) => (
-              <TextFormItem placeholder="일정" {...field} />
+              <TextFormItem label="일정" placeholder="일정" {...field} />
             )}
           />
           <FormField

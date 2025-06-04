@@ -2,19 +2,26 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCalendar } from "./useCalendar";
 import dayjs from "dayjs";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { isSameDay, isSameMonth } from "date-fns";
+import { format, isSameDay, isSameMonth } from "date-fns";
 
 interface SimpleCalendarProps {
+  defaultValue?: Date;
   onSelect: (date: Date) => void;
 }
 
-const SimpleCalendar = ({ onSelect }: SimpleCalendarProps) => {
+const SimpleCalendar = ({ defaultValue, onSelect }: SimpleCalendarProps) => {
   const { weeks, curDate, focusDate, onNextMonth, onPrevMonth, onFocusDate } =
     useCalendar(new Date());
 
   useEffect(() => {
-    onSelect(focusDate);
-  }, [focusDate]);
+    if (!defaultValue) return;
+    onFocusDate(defaultValue);
+  }, []);
+
+  const handleDateClick = (date: Date) => {
+    onFocusDate(date);
+    onSelect(date); // 실제 클릭 시에만 호출
+  };
 
   return (
     <div className="flex flex-col gap-2 pb-2">
@@ -32,7 +39,7 @@ const SimpleCalendar = ({ onSelect }: SimpleCalendarProps) => {
           weeks={weeks}
           viewDate={curDate}
           focusDate={focusDate}
-          onFocusDate={onFocusDate}
+          onFocusDate={handleDateClick}
         />
       </div>
     </div>
@@ -75,7 +82,7 @@ interface RenderDaysProps {
   weeks: Date[][];
   viewDate: Date;
   focusDate: Date;
-  onFocusDate: Dispatch<SetStateAction<Date>>;
+  onFocusDate: (date: Date) => void;
 }
 
 const SimpleCalendarDay = ({
@@ -128,14 +135,16 @@ const DayBox = ({
 }: {
   day: Date;
   viewDate: Date;
-  focusDate?: Date;
+  focusDate: Date;
 } & React.HTMLProps<HTMLDivElement>) => {
   return (
     <div
       className={`flex-1  overflow-hidden w-8 h-8 text-xs flex items-center justify-center hover:cursor-pointer hover:bg-gray-200
-        ${focusDate === day ? "bg-blue-100" : null} ${
-        !isSameMonth(day, viewDate) ? "text-gray-400" : ""
-      }
+        ${
+          format(focusDate, "yyyy/MM/dd") === format(day, "yyyy/MM/dd")
+            ? "bg-blue-100"
+            : null
+        } ${!isSameMonth(day, viewDate) ? "text-gray-400" : ""}
 
         `}
       {...props}

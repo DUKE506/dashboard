@@ -11,6 +11,7 @@ import { format, getHours, getMinutes, isSameHour } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import SimpleCalendar from "./simple-calendar";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface CustomDatetimePickerProps {
   value: Date;
@@ -22,10 +23,6 @@ const CustomDatetimePicker = ({
   onChange,
 }: CustomDatetimePickerProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
-
-  useEffect(() => {
-    // console.log("값 초기화 : ", value);
-  }, [value]);
 
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
@@ -49,7 +46,7 @@ const CustomDatetimePicker = ({
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={setIsOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -68,40 +65,48 @@ const CustomDatetimePicker = ({
       </PopoverTrigger>
       <PopoverContent className="w-fit p-0 overflow-y-hidden h-full">
         <div className="flex h-full">
-          <SimpleCalendar onSelect={handleDateSelect} />
-          <div className="flex h-full">
-            <div className="flex flex-col px-1 items-center  w-auto h-[290px] overflow-y-auto">
-              {hours.reverse().map((hour, i) => {
-                return (
+          <SimpleCalendar defaultValue={value} onSelect={handleDateSelect} />
+          <div className="flex flex-col sm:flex-row sm:h-[300px] divide-y sm:divide-y-0 sm:divide-x">
+            <ScrollArea className="w-64 sm:w-auto">
+              <div className="flex sm:flex-col p-2">
+                {hours.map((hour, i) => {
+                  return (
+                    <div
+                      key={i}
+                      className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9  hover:cursor-pointer hover:bg-gray-200 ${
+                        hour.toString() === getHours(value).toString()
+                          ? "bg-blue-100"
+                          : ""
+                      }`}
+                      onClick={() => handleTimeChange("hour", hour.toString())}
+                    >
+                      {hour}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <ScrollBar orientation="horizontal" className="sm:hidden" />
+            </ScrollArea>
+            <ScrollArea className="w-64 sm:w-auto">
+              <div className="flex sm:flex-col p-2">
+                {Array.from({ length: 12 }, (_, i) => i * 5).map((m, i) => (
                   <div
                     key={i}
-                    className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9  hover:cursor-pointer hover:bg-gray-200 ${
-                      hour.toString() === getHours(value).toString()
+                    className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9 p-2 hover:cursor-pointer hover:bg-gray-200 ${
+                      m.toString() === getMinutes(value).toString()
                         ? "bg-blue-100"
                         : ""
                     }`}
-                    onClick={() => handleTimeChange("hour", hour.toString())}
+                    onClick={() => handleTimeChange("minute", m.toString())}
                   >
-                    {hour}
+                    {m.toString().padStart(2, "0")}
                   </div>
-                );
-              })}
-            </div>
-            <div className="flex flex-col px-1 items-center  w-auto h-[290px] overflow-y-auto">
-              {Array.from({ length: 12 }, (_, i) => i * 5).map((m, i) => (
-                <div
-                  key={i}
-                  className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9 p-2 hover:cursor-pointer hover:bg-gray-200 ${
-                    m.toString() === getMinutes(value).toString()
-                      ? "bg-blue-100"
-                      : ""
-                  }`}
-                  onClick={() => handleTimeChange("minute", m.toString())}
-                >
-                  {m.toString().padStart(2, "0")}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              <ScrollBar orientation="horizontal" className="sm:hidden" />
+            </ScrollArea>
           </div>
         </div>
       </PopoverContent>

@@ -7,15 +7,22 @@ import { useCalendarStore } from "@/store/calendar-store";
 import { Schedule } from "@/types/schedule/schedule";
 import CustomDialog from "../../custom-dialog";
 import ScheduleForm from "../../form/schedule-form";
+import { cn } from "@/lib/utils";
 
 //달력 헤더
-interface RenderHeadersProps {
+interface RenderHeaderCompProps {
   date: Date;
   onPrevMonth: () => void;
   onNextMonth: () => void;
 }
+
+interface RenderHeadersProps extends RenderHeaderCompProps {
+  focusDate: Date;
+}
+
 const RenderHeader = ({
   date,
+  focusDate,
   onPrevMonth,
   onNextMonth,
 }: RenderHeadersProps) => {
@@ -31,14 +38,14 @@ const RenderHeader = ({
       </div>
 
       <CustomDialog className="p-0 h-fit bg-white hover:bg-gray-50">
-        <ScheduleForm />
+        <ScheduleForm startDate={new Date(focusDate.setMinutes(0))} />
       </CustomDialog>
     </div>
   );
 };
 
 //달력 날짜 컨트롤러
-interface RemoteDateProps extends RenderHeadersProps {}
+interface RemoteDateProps extends RenderHeaderCompProps {}
 
 const RemoteDate = ({ date, onPrevMonth, onNextMonth }: RemoteDateProps) => {
   return (
@@ -114,7 +121,7 @@ const DayBox = ({
   focusDate,
   ...props
 }: { day: Date; focusDate?: Date } & React.HTMLProps<HTMLDivElement>) => {
-  const { holidays } = useCalendarStore();
+  const { holidays, schedules } = useCalendarStore();
 
   return (
     <div
@@ -136,6 +143,11 @@ const DayBox = ({
         {holidays.map((h, i) =>
           isSameDay(day, h.startedAt) ? <ScheduleItem key={i} data={h} /> : null
         )}
+        {schedules.map((s, i) =>
+          isSameDay(day, s.startedAt) ? (
+            <ScheduleItem className="bg-orange-500" key={i} data={s} />
+          ) : null
+        )}
       </div>
     </div>
   );
@@ -143,11 +155,17 @@ const DayBox = ({
 
 interface ScheduleItemProps {
   data: Schedule;
+  className?: string;
 }
 
-const ScheduleItem = ({ data }: ScheduleItemProps) => {
+const ScheduleItem = ({ className, data }: ScheduleItemProps) => {
   return (
-    <div className="bg-blue-500 text-[0.6rem] text-white px-2 rounded-xs truncate">
+    <div
+      className={cn(
+        "bg-blue-500 text-[0.6rem] text-white px-2 rounded-xs truncate",
+        className
+      )}
+    >
       {data.title}
     </div>
   );
@@ -167,6 +185,7 @@ const Calendar = () => {
         {/* 헤더는 고정 크기 */}
         <RenderHeader
           date={curDate}
+          focusDate={focusDate}
           onNextMonth={onNextMonth}
           onPrevMonth={onPrevMonth}
         />

@@ -1,4 +1,9 @@
-import { FormControl, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeClosed } from "lucide-react";
 import { useState } from "react";
@@ -12,7 +17,11 @@ interface TextFormItemProps
 export const TextFormItem = ({ label, ...props }: TextFormItemProps) => {
   return (
     <FormItem>
-      <FormLabel>{label}</FormLabel>
+      <div className="flex justify-between">
+        <FormLabel>{label}</FormLabel>
+        <FormMessage />
+      </div>
+
       <FormControl>
         <Input {...props} />
       </FormControl>

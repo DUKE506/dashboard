@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,8 +17,9 @@ interface CustomDialogProps {
 }
 
 const CustomDialog = ({ title, children, className }: CustomDialogProps) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className={cn("rounded-xs ", className)}>
           <PlusIcon className="text-black stroke-1" />
