@@ -1,4 +1,5 @@
-import { Schedule } from "@/types/schedule";
+import { CreateSchedule } from "@/types/schedule/create-schedule";
+import { Schedule } from "@/types/schedule/schedule";
 import dayjs from "dayjs";
 import ky from "ky";
 import { create } from "zustand";
@@ -7,6 +8,7 @@ import { devtools, persist } from "zustand/middleware";
 interface CalendarState {
   schedules: Schedule[];
   holidays: Schedule[];
+
   getHolidays: (date: Date) => Promise<void>;
 }
 
@@ -16,6 +18,7 @@ export const useCalendarStore = create<CalendarState>()(
       (set) => ({
         schedules: [],
         holidays: [],
+
         getHolidays: async (date) => {
           const searchParams = new URLSearchParams();
 
@@ -26,8 +29,6 @@ export const useCalendarStore = create<CalendarState>()(
           });
 
           const data: Record<string, any> = await res.json();
-
-          
 
           const holidays: Schedule[] = data.response.body.items.item.map(
             (s: Record<string, any>, i: number) => {

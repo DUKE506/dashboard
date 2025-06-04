@@ -4,9 +4,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { isSameDay } from "date-fns";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useCalendarStore } from "@/store/calendar-store";
-import { Schedule } from "@/types/schedule";
+import { Schedule } from "@/types/schedule/schedule";
 import CustomDialog from "../../custom-dialog";
+import ScheduleForm from "../../form/schedule-form";
 
+//달력 헤더
 interface RenderHeadersProps {
   date: Date;
   onPrevMonth: () => void;
@@ -18,29 +20,44 @@ const RenderHeader = ({
   onNextMonth,
 }: RenderHeadersProps) => {
   return (
-    <div className="flex justify-center items-center gap-2 px-2">
+    <div className="flex justify-center items-center gap-2 px-2 h-full relative">
+      <div></div>
+      <div className="flex-1 h-full ">
+        <RemoteDate
+          date={date}
+          onNextMonth={onNextMonth}
+          onPrevMonth={onPrevMonth}
+        />
+      </div>
+
+      <CustomDialog className="p-0 h-fit bg-white hover:bg-gray-50">
+        <ScheduleForm />
+      </CustomDialog>
+    </div>
+  );
+};
+
+//달력 날짜 컨트롤러
+interface RemoteDateProps extends RenderHeadersProps {}
+
+const RemoteDate = ({ date, onPrevMonth, onNextMonth }: RemoteDateProps) => {
+  return (
+    <div className="flex absolute left-[50%] top-[50%] translate-[-50%] ">
       <div
         className="flex items-center justify-center hover:cursor-pointer"
         onClick={onPrevMonth}
       >
         <ChevronLeft className="w-6 h-6 text-gray-500" />
       </div>
-
       <span className="font-bold flex items-center">
         {dayjs(date).format("YYYY")}.{dayjs(date).format("MM")}
       </span>
-
       <div
         className="flex items-center justify-center hover:cursor-pointer"
         onClick={onNextMonth}
       >
         <ChevronRight className="w-6 h-6 text-gray-500" />
       </div>
-      <CustomDialog className="p-0 h-fit bg-white hover:bg-gray-50">
-        <div>
-
-        </div>
-      </CustomDialog>
     </div>
   );
 };
@@ -48,7 +65,7 @@ const RenderHeader = ({
 interface RenderDaysProps {
   weeks: Date[][];
   focusDate: Date;
-  onFocusDate: Dispatch<SetStateAction<Date>>
+  onFocusDate: Dispatch<SetStateAction<Date>>;
 }
 const RenderDays = ({ weeks, focusDate, onFocusDate }: RenderDaysProps) => {
   const labels = [
@@ -77,7 +94,14 @@ const RenderDays = ({ weeks, focusDate, onFocusDate }: RenderDaysProps) => {
       {weeks.map((w, i) => (
         <div key={i} className="flex flex-1 divide-x border-x">
           {w.map((d, i) => {
-            return <DayBox key={i} day={d} focusDate={focusDate} onClick={() => onFocusDate(d)} />;
+            return (
+              <DayBox
+                key={i}
+                day={d}
+                focusDate={focusDate}
+                onClick={() => onFocusDate(d)}
+              />
+            );
           })}
         </div>
       ))}
@@ -85,16 +109,26 @@ const RenderDays = ({ weeks, focusDate, onFocusDate }: RenderDaysProps) => {
   );
 };
 
-const DayBox = ({ day, focusDate, ...props }: { day: Date, focusDate?: Date } & React.HTMLProps<HTMLDivElement>) => {
+const DayBox = ({
+  day,
+  focusDate,
+  ...props
+}: { day: Date; focusDate?: Date } & React.HTMLProps<HTMLDivElement>) => {
   const { holidays } = useCalendarStore();
 
   return (
-    <div className={`flex-1 p-2 overflow-hidden ${focusDate === day ? 'bg-blue-100' : null}`}{...props}>
+    <div
+      className={`flex-1 p-2 overflow-hidden ${
+        focusDate === day ? "bg-blue-100" : null
+      }`}
+      {...props}
+    >
       <span
-        className={`text-xs   ${isSameDay(day, new Date())
-          ? "bg-blue-500 flex justify-center items-center w-6 h-6 text-center rounded-full text-white "
-          : null
-          }`}
+        className={`text-xs   ${
+          isSameDay(day, new Date())
+            ? "bg-blue-500 flex justify-center items-center w-6 h-6 text-center rounded-full text-white "
+            : null
+        }`}
       >
         {dayjs(day).format("DD")}
       </span>
@@ -102,7 +136,6 @@ const DayBox = ({ day, focusDate, ...props }: { day: Date, focusDate?: Date } & 
         {holidays.map((h, i) =>
           isSameDay(day, h.startedAt) ? <ScheduleItem key={i} data={h} /> : null
         )}
-
       </div>
     </div>
   );
@@ -121,7 +154,8 @@ const ScheduleItem = ({ data }: ScheduleItemProps) => {
 };
 
 const Calendar = () => {
-  const { weeks, curDate, focusDate, onNextMonth, onPrevMonth, onFocusDate } = useCalendar(new Date());
+  const { weeks, curDate, focusDate, onNextMonth, onPrevMonth, onFocusDate } =
+    useCalendar(new Date());
   const { getHolidays } = useCalendarStore();
   useEffect(() => {
     getHolidays(new Date());
@@ -139,7 +173,11 @@ const Calendar = () => {
       </div>
       <div className="flex-1 min-h-0 px-2">
         {/* 나머지 공간, 최소높이 0 */}
-        <RenderDays weeks={weeks} focusDate={focusDate} onFocusDate={onFocusDate} />
+        <RenderDays
+          weeks={weeks}
+          focusDate={focusDate}
+          onFocusDate={onFocusDate}
+        />
       </div>
     </div>
   );
