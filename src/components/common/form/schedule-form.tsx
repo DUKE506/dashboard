@@ -74,8 +74,8 @@ const ScheduleForm = ({ startDate }: ScheduleFormProps) => {
       }
     }
 
-    console.log("바뀐날짜 시작 : ", form.getValues().startedAt);
-    console.log("바뀐날짜 정료 : ", form.getValues().endedAt);
+    // console.log("바뀐날짜 시작 : ", form.getValues().startedAt);
+    // console.log("바뀐날짜 정료 : ", form.getValues().endedAt);
   };
 
   return (
