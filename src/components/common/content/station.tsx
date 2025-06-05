@@ -1,11 +1,12 @@
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { lineColor } from "@/lib/station";
 import { useDataState } from "@/store/data-store";
 import { StationData, Subway } from "@/types/arrival-info";
 import dayjs from "dayjs";
 import { RotateCcw, XIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { RefreshButton } from "./contents";
 
 const Station = () => {
   const { stationData, addStationArrivalData, selectAllStation } =
@@ -29,7 +30,7 @@ const Station = () => {
   };
 
   return (
-    <div className="h-full flex flex-col pb-2">
+    <div className="h-full flex flex-col">
       <div className="p-2">
         <Input
           value={station}
@@ -38,28 +39,24 @@ const Station = () => {
           onKeyDown={(e) => handleAddStation(e)}
         />
       </div>
-      <div className="flex justify-end items-center p-2 gap-2">
-        <span className="text-xs text-gray-500">최근 조회</span>
-        <span className="text-xs">{dayjs(views).format("hh:mm:ss")}</span>
-        <RotateCcw
-          className="w-4 h-4 text-gray-500 hover:text-gray-600 hover:cursor-pointer"
-          onClick={handleAllSelect}
-        />
-      </div>
-      <div
-        className="h-full flex flex-col gap-2 overflow-auto
+      <RefreshButton date={views} onClick={handleAllSelect} />
+      <ScrollArea className="h-full min-h-0">
+        <div
+          className="h-full flex flex-col gap-2
       "
-      >
-        {stationData.length > 0 ? (
-          stationData.map((s, i) => (
-            <StationItem key={i} data={s}></StationItem>
-          ))
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <span className="text-sm ">지하철역을 추가하세요.</span>
-          </div>
-        )}
-      </div>
+        >
+          {stationData.length > 0 ? (
+            stationData.map((s, i) => (
+              <StationItem key={i} data={s}></StationItem>
+            ))
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <span className="text-sm ">지하철역을 추가하세요.</span>
+            </div>
+          )}
+        </div>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { CreateSchedule } from "@/types/schedule/create-schedule";
 import { Schedule } from "@/types/schedule/schedule";
 import dayjs from "dayjs";
 import ky from "ky";
+import { v4 } from "uuid";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
@@ -11,6 +12,7 @@ interface CalendarState {
 
   getHolidays: (date: Date) => Promise<void>;
   addSchedule: (schedule: Schedule) => void;
+  deleteSchedule: (id: string) => void;
 }
 
 export const useCalendarStore = create<CalendarState>()(
@@ -38,7 +40,7 @@ export const useCalendarStore = create<CalendarState>()(
                 .slice(4, 6)}-${s.locdate.toString().slice(6, 8)}`;
 
               return new Schedule({
-                id: i,
+                id: v4(),
                 title: s.dateName,
                 startedAt: new Date(formatted),
                 endedAt: new Date(formatted),
@@ -51,6 +53,11 @@ export const useCalendarStore = create<CalendarState>()(
         addSchedule: (schedule) => {
           set((state) => ({
             schedules: [...state.schedules, schedule],
+          }));
+        },
+        deleteSchedule: (id) => {
+          set((state) => ({
+            schedules: state.schedules.filter((s) => s.id !== id),
           }));
         },
       }),

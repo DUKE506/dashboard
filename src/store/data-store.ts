@@ -22,9 +22,9 @@ interface DataState {
 
   //지하철 도착
   stationData: StationData[];
-  addStationArrivalData: (name: string) => Promise<boolean>;
+  addStationArrivalData: (name: string) => Promise<string>;
   deleteStation: (name: string) => void;
-  selectAllStation: () => Promise<boolean>;
+  selectAllStation: () => Promise<string>;
 }
 
 export const useDataState = create<DataState>()(
@@ -105,7 +105,16 @@ export const useDataState = create<DataState>()(
           const res = await ky.get(`api/station?name=${name}`);
           const data: Record<string, any> = await res.json();
 
-          if (!res.ok) return res.ok;
+          //res.ok => 인증키가 잘못돼도 true
+
+          // code: "ERROR-338"
+          // developerMessage: ""
+          // link: ""
+          // message: "해당 인증키로는 실시간 서비스를 사용할 수 없습니다."
+          // status: 500
+          // total:0
+
+          if (data.status === 500) return data.message;
 
           /**
            * 1.역이 동일한지
@@ -118,53 +127,6 @@ export const useDataState = create<DataState>()(
             const subwayItems = subwayItemCasting({
               newData: data.realtimeArrivalList,
             });
-
-            // //호선별 그룹화
-            // const subwayGroup = data.realtimeArrivalList.reduce(
-            //   (acc: any, obj: any) => {
-            //     let key = subwayIdTransfer(obj.subwayId);
-
-            //     // console.log("키값 : ", key);
-            //     if (!acc[key]) {
-            //       acc[key] = { upLine: [], downLine: [] };
-            //     }
-            //     const upDown = obj.ordkey.slice(0, 1);
-            //     // console.log("상하행 : ", upDown);
-            //     if (upDown === "0") {
-            //       //상행
-            //       acc[key].upLine.push(
-            //         new ArrivalInfo({
-            //           subwayId: obj.subwayId,
-            //           subwayName: name,
-            //           updnLine: obj.updnLine,
-            //           bstatnNm: obj.bstatnNm,
-            //           barvlDt: obj.barvlDt,
-            //         })
-            //       );
-            //     } else {
-            //       acc[key].downLine.push(
-            //         new ArrivalInfo({
-            //           subwayId: obj.subwayId,
-            //           subwayName: name,
-            //           updnLine: obj.updnLine,
-            //           bstatnNm: obj.bstatnNm,
-            //           barvlDt: obj.barvlDt,
-            //         })
-            //       );
-            //     }
-
-            //     return acc;
-            //   },
-            //   {}
-            // );
-
-            // const subway = Object.entries(subwayGroup).map(([key, value]) => {
-            //   return new Subway({
-            //     name: key,
-            //     upLine: subwayGroup[key].upLine,
-            //     downLine: subwayGroup[key].downLine,
-            //   });
-            // });
 
             return {
               stationData: existing
@@ -189,9 +151,7 @@ export const useDataState = create<DataState>()(
           });
           const { stationData } = get();
 
-          console.log(stationData);
-
-          return res.ok;
+          return data.errorMessage.message;
         },
 
         deleteStation: (name) => {
@@ -202,7 +162,7 @@ export const useDataState = create<DataState>()(
 
         selectAllStation: async () => {
           const { stationData } = get();
-          if (stationData.length < 0) return false;
+          if (stationData.length < 0) return "조회할 역이 존재하지 않습니다.";
 
           const req = stationData.map((s) =>
             ky.get(`api/station?name=${s.name}`)
@@ -231,7 +191,7 @@ export const useDataState = create<DataState>()(
             );
           }).catch;
 
-          return true;
+          return "정상 처리되었습니다";
         },
       }),
       { name: "data-store" }

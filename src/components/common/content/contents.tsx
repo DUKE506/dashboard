@@ -9,6 +9,8 @@ import Todo from "./todo";
 import Station from "./station";
 import Schedular from "./scheduler/schedular";
 import Calendar from "./calendar/calendar";
+import { RotateCcwIcon } from "lucide-react";
+import { format } from "date-fns/format";
 
 interface ContentsProps {
   data: GridContentsLayout;
@@ -20,10 +22,11 @@ const Contents = ({ data, children, ...props }: ContentsProps) => {
     switch (data.contents.name) {
       case "뉴스":
         data.item.minW = 3;
-        data.item.minH = 2;
+        data.item.minH = 10;
         return <News data={data.item} />;
       case "날씨":
         data.item.minW = 2;
+        data.item.maxH = 5;
         return <Weather />;
       case "증권":
         data.item.minW = 2;
@@ -54,3 +57,27 @@ const Contents = ({ data, children, ...props }: ContentsProps) => {
 };
 
 export default Contents;
+
+/**
+ * 새로고침
+ */
+
+interface RefreshButtonProps {
+  date?: Date;
+  onClick: () => void;
+}
+
+export const RefreshButton = ({ date, onClick }: RefreshButtonProps) => {
+  return (
+    <div className="flex justify-end items-center gap-2">
+      <span className="text-xs text-gray-500">최근 조회</span>
+      <span className="text-xs">{date ? format(date, "HH:mm:ss") : null}</span>
+      <div
+        className="p-[6px] aspect-square rounded-[50%] hover:bg-gray-200 hover:cursor-pointer"
+        onClick={onClick}
+      >
+        <RotateCcwIcon className="w-4 h-4 text-gray-500 " />
+      </div>
+    </div>
+  );
+};

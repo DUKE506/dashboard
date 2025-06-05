@@ -12,6 +12,7 @@ import { CreateSchedule } from "@/types/schedule/create-schedule";
 import { format, isAfter, isBefore } from "date-fns";
 import { useCalendar } from "../content/calendar/useCalendar";
 import { useCalendarStore } from "@/store/calendar-store";
+import { v4 as uuidv4 } from "uuid";
 
 const scheduleFormSchema = z.object({
   title: z.string().min(2, { message: "두 글자 이상 입력해주세요." }),
@@ -23,9 +24,10 @@ type ScheduleFormType = z.infer<typeof scheduleFormSchema>;
 
 interface ScheduleFormProps {
   startDate?: Date;
+  onClose?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ScheduleForm = ({ startDate }: ScheduleFormProps) => {
+const ScheduleForm = ({ startDate, onClose }: ScheduleFormProps) => {
   const { schedules, addSchedule } = useCalendarStore();
   const [schedule, setSchedule] = useState<CreateSchedule>({
     startedAt: startDate,
@@ -50,10 +52,11 @@ const ScheduleForm = ({ startDate }: ScheduleFormProps) => {
   const handleSubmit = (values: ScheduleFormType) => {
     addSchedule(
       new Schedule({
-        id: schedules.length + 1,
+        id: uuidv4(),
         ...values,
       })
     );
+    if (onClose) onClose(false);
   };
 
   const handleDateChange = (

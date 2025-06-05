@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useDataState } from "@/store/data-store";
 import ky from "ky";
 import Link from "next/link";
@@ -39,7 +40,7 @@ const News = ({ data, children, ...props }: ContentProps) => {
   };
 
   return (
-    <div className="h-full flex flex-col pb-3">
+    <div className="flex flex-col h-full">
       {children}
       <div className="p-2 flex-shrink-0">
         <Input
@@ -49,8 +50,7 @@ const News = ({ data, children, ...props }: ContentProps) => {
           onKeyDown={(e) => onSearch(e)}
         />
       </div>
-
-      <div className="h-full overflow-y-auto min-h-0 ">
+      <ScrollArea className="h-full min-h-0 ">
         <div className="flex flex-col gap-4">
           {naverData?.items.map((item, i) => {
             // const cleanTitle = sanitizeHtml(item?.title);
@@ -68,7 +68,8 @@ const News = ({ data, children, ...props }: ContentProps) => {
             );
           })}
         </div>
-      </div>
+        <ScrollBar orientation="vertical" />
+      </ScrollArea>
     </div>
   );
 };

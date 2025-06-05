@@ -1,5 +1,5 @@
 export class Schedule {
-  id: number;
+  id: string;
   title: string;
   startedAt: Date;
   endedAt: Date;
@@ -10,7 +10,7 @@ export class Schedule {
     startedAt,
     endedAt,
   }: {
-    id: number;
+    id: string;
     title: string;
     startedAt: Date;
     endedAt: Date;

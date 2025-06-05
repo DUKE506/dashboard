@@ -13,7 +13,7 @@ const GridItem = ({ data, title, children, ...props }: GridItemProps) => {
 
   return (
     <div {...props}>
-      <div className="relative h-full w-full border overflow-hidden bg-white/70 flex flex-col">
+      <div className="relative h-full w-full border overflow-hidden bg-white flex flex-col dark:bg-[#2e2e2e]">
         <div className="relative w-full flex items-start justify-between px-2 py-2 ">
           <span className="text-sm text-gray-500 leading-none font-bold">
             {title}
@@ -31,7 +31,7 @@ const GridItem = ({ data, title, children, ...props }: GridItemProps) => {
         </div>
 
         {/* 컨텐츠 */}
-        <div className="flex-1 min-h-0 w-full ">{children}</div>
+        <div className="flex-1 min-h-0 w-full pb-3">{children}</div>
       </div>
     </div>
   );

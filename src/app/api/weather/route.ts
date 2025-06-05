@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
         searchParams: params,
       }
     );
+
     const data = await res.text();
 
     return new NextResponse(data, { status: res.status });

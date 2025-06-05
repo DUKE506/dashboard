@@ -145,7 +145,6 @@ const DayBox = ({
             ? "bg-blue-100"
             : null
         } ${!isSameMonth(day, viewDate) ? "text-gray-400" : ""}
-
         `}
       {...props}
     >

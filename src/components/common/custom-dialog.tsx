@@ -12,12 +12,15 @@ import { cn } from "@/lib/utils";
 
 interface CustomDialogProps {
   title?: string;
-  children: React.ReactNode;
+  children: (props: {
+    setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  }) => React.ReactNode;
   className?: string;
 }
 
 const CustomDialog = ({ title, children, className }: CustomDialogProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -30,7 +33,7 @@ const CustomDialog = ({ title, children, className }: CustomDialogProps) => {
         <DialogHeader>
           <DialogTitle>{title ?? "다이얼로그"}</DialogTitle>
         </DialogHeader>
-        {children}
+        {children({ setIsOpen })}
       </DialogContent>
     </Dialog>
   );
