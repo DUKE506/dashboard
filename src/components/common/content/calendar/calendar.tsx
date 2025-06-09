@@ -57,7 +57,7 @@ const RenderHeader = ({
 
       <CustomDialog
         title="일정추가"
-        className="p-0 h-fit bg-inherit hover:bg-gray-50 dark:hover:bg-gray-200"
+        className="p-0 py-1 h-fit bg-inherit hover:bg-gray-50 dark:hover:bg-[#535353]"
       >
         {({ setIsOpen }) => (
           <ScheduleForm
@@ -232,14 +232,14 @@ const SchedulePopover = ({ className, data }: ScheduleItemProps) => {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button
+        <div
           className={cn(
-            "bg-blue-500 text-[0.6rem] py-0 h-fit flex items-center justify-start text-white px-2 rounded-xs truncate min-w-0 hover:bg-blue-600 hover:cursor-pointer",
+            "bg-blue-500 text-[0.6rem] py-0 h-fit flex items-center justify-start text-white px-2 rounded-xs  min-w-0 hover:bg-blue-600 hover:cursor-pointer",
             className
           )}
         >
-          {data.title}
-        </Button>
+          <span className="w-full truncate">{data.title}</span>
+        </div>
       </PopoverTrigger>
       <PopoverContent>
         <div>

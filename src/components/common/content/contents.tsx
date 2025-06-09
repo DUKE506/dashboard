@@ -27,6 +27,7 @@ const Contents = ({ data, children, ...props }: ContentsProps) => {
       case "날씨":
         data.item.minW = 2;
         data.item.maxH = 5;
+        data.item.minH = 5;
         return <Weather />;
       case "증권":
         data.item.minW = 2;

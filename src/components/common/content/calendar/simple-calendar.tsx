@@ -46,6 +46,9 @@ const SimpleCalendar = ({ defaultValue, onSelect }: SimpleCalendarProps) => {
   );
 };
 
+/**
+ * 달력 헤더
+ */
 interface SimpleCalendarHeaderProps {
   date: Date;
   onPrevMonth: () => void;
@@ -78,6 +81,9 @@ const SimpleCalendarHeader = ({
   );
 };
 
+/**
+ * 달력 내용
+ */
 interface RenderDaysProps {
   weeks: Date[][];
   viewDate: Date;
@@ -127,6 +133,11 @@ const SimpleCalendarDay = ({
   );
 };
 
+/**
+ * 달력 일 박스
+ * @param param0
+ * @returns
+ */
 const DayBox = ({
   day,
   viewDate,
@@ -139,10 +150,10 @@ const DayBox = ({
 } & React.HTMLProps<HTMLDivElement>) => {
   return (
     <div
-      className={`flex-1  overflow-hidden w-8 h-8 text-xs flex items-center justify-center hover:cursor-pointer hover:bg-gray-200
+      className={`flex-1  overflow-hidden w-8 h-8 text-xs flex items-center justify-center hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-[#535353]
         ${
           format(focusDate, "yyyy/MM/dd") === format(day, "yyyy/MM/dd")
-            ? "bg-blue-100"
+            ? "bg-blue-100 dark:bg-[#535353]"
             : null
         } ${!isSameMonth(day, viewDate) ? "text-gray-400" : ""}
         `}

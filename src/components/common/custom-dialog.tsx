@@ -24,9 +24,14 @@ const CustomDialog = ({ title, children, className }: CustomDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className={cn("rounded-xs ", className)}>
-          <PlusIcon className="text-black stroke-1" />
-          <span className="text-black text-xs">새 일정</span>
+        <Button
+          className={cn(
+            "rounded-xs hover:bg-gray-200 hover:cursor-pointer ",
+            className
+          )}
+        >
+          <PlusIcon className="text-black stroke-1 dark:text-white" />
+          <span className="text-black text-xs dark:text-white">새 일정</span>
         </Button>
       </DialogTrigger>
       <DialogContent>

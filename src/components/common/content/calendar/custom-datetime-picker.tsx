@@ -73,9 +73,9 @@ const CustomDatetimePicker = ({
                   return (
                     <div
                       key={i}
-                      className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9  hover:cursor-pointer hover:bg-gray-200 ${
+                      className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9  hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-[#535353] ${
                         hour.toString() === getHours(value).toString()
-                          ? "bg-blue-100"
+                          ? "bg-blue-100 dark:bg-[#535353]"
                           : ""
                       }`}
                       onClick={() => handleTimeChange("hour", hour.toString())}
@@ -93,9 +93,9 @@ const CustomDatetimePicker = ({
                 {Array.from({ length: 12 }, (_, i) => i * 5).map((m, i) => (
                   <div
                     key={i}
-                    className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9 p-2 hover:cursor-pointer hover:bg-gray-200 ${
+                    className={`flex justify-center items-center aspect-square shrink-0 text-xs w-9 h-9 p-2 hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-[#535353] ${
                       m.toString() === getMinutes(value).toString()
-                        ? "bg-blue-100"
+                        ? "bg-blue-100 dark:bg-[#535353]"
                         : ""
                     }`}
                     onClick={() => handleTimeChange("minute", m.toString())}
