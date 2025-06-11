@@ -56,7 +56,7 @@ interface ItemBoxProps {
 const ItemBox = ({ label, description, onClick }: ItemBoxProps) => {
   return (
     <div className="flex flex-col gap-2 mx-4" onClick={onClick}>
-      <div className="flex justify-center items-center border rounded-xs bg-gray-100 min-h-40">
+      <div className="flex justify-center items-center border rounded-xs bg-white dark:bg-[#2e2e2e] min-h-40">
         <Image className="w-6 h-6 text-gray-500" />
       </div>
       <div className="flex flex-col gap-1">
